@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JEE Quiz Game — Free Physics, Chemistry & Math Practice Quiz | JEE Mission Console</title>
+<meta name="description" content="Play a free JEE quiz game online. Timed Physics, Chemistry and Math MCQ quizzes plus logic puzzles, built for JEE Main aspirants who want quick daily practice with XP, streaks and levels." />
+<meta name="robots" content="index, follow" />
+<meta name="keywords" content="JEE quiz, JEE quiz game, JEE prep quiz, JEE practice questions, JEE Physics Chemistry Math quiz, free JEE mock test, JEE puzzle game" />
+<!-- Replace with your real published URL once the site is live -->
+<link rel="canonical" href="https://YOUR-DOMAIN-HERE/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="JEE Quiz Game — Free Physics, Chemistry & Math Practice Quiz" />
+<meta property="og:description" content="A free, timed JEE quiz game for Physics, Chemistry and Math, plus a logic Puzzle Lab. Earn XP, build streaks, and level up while you practice." />
+<meta property="og:url" content="https://YOUR-DOMAIN-HERE/" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="JEE Quiz Game — Free Physics, Chemistry & Math Practice Quiz" />
+<meta name="twitter:description" content="A free, timed JEE quiz game for Physics, Chemistry and Math, plus a logic Puzzle Lab." />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "JEE Mission Console",
+  "description": "A free browser-based JEE quiz game with timed Physics, Chemistry and Math MCQ rounds and a standalone logic Puzzle Lab, built for JEE Main aspirants.",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0B1220;
+    --bg-panel:#121B2E;
+    --bg-panel-2:#16213A;
+    --grid-line: rgba(143,160,188,0.07);
+    --accent-amber:#F2A93B;
+    --accent-amber-soft: rgba(242,169,59,0.16);
+    --accent-cyan:#5FD6D0;
+    --accent-cyan-soft: rgba(95,214,208,0.14);
+    --accent-rose:#E5566B;
+    --accent-rose-soft: rgba(229,86,107,0.16);
+    --text-primary:#EAF1FB;
+    --text-muted:#8FA0BC;
+    --border-soft: rgba(143,160,188,0.16);
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background-color:var(--bg-deep);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--text-primary);
+    font-family:var(--font-body);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:22px 14px 60px;
+  }
+  .app{width:100%; max-width:880px;}
+  a, button{font-family:inherit;}
+  button{cursor:pointer;}
+  button:focus-visible, input:focus-visible, .opt:focus-visible{
+    outline:2px solid var(--accent-cyan);
+    outline-offset:2px;
+  }
+
+  /* ---------- Console strip (signature HUD) ---------- */
+  .console-strip{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:22px;
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    padding:14px 20px;
+    margin-bottom:20px;
+    font-family:var(--font-mono);
+  }
+  .hud-item{display:flex; flex-direction:column; gap:5px;}
+  .hud-label{font-size:10px; letter-spacing:0.12em; color:var(--text-muted); text-transform:uppercase;}
+  .hud-value{font-size:14px; font-weight:700;}
+  .rank-pill{
+    font-family:var(--font-display);
+    font-size:13px;
+    font-weight:600;
+    background:var(--accent-amber-soft);
+    color:var(--accent-amber);
+    border:1px solid rgba(242,169,59,0.35);
+    border-radius:999px;
+    padding:4px 12px;
+  }
+  .xp-track{position:relative; width:170px; height:10px; border-radius:6px; background:rgba(143,160,188,0.14); overflow:hidden;}
+  .xp-fill{
+    position:absolute; inset:0; height:100%; width:0%;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(11,18,32,0.45) 0 1px, transparent 1px 15px),
+      linear-gradient(90deg,#caa24a,var(--accent-amber));
+    transition:width 0.7s cubic-bezier(.2,.9,.25,1);
+  }
+  .streak-flame{display:flex; align-items:center; gap:6px; font-weight:700; color:var(--accent-amber);}
+  .streak-flame svg{width:14px; height:14px;}
+  .pulse{animation:pulseFlame 0.5s ease;}
+  @keyframes pulseFlame{0%{transform:scale(1);} 40%{transform:scale(1.35);} 100%{transform:scale(1);}}
+  .reset-btn{
+    margin-left:auto;
+    background:transparent;
+    border:1px solid var(--border-soft);
+    color:var(--text-muted);
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    padding:7px 12px;
+    border-radius:8px;
+  }
+  .reset-btn:hover{color:var(--accent-rose); border-color:rgba(229,86,107,0.4);}
+
+  /* ---------- Bezel / screen panel ---------- */
+  .bezel{
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:18px;
+    padding:28px clamp(18px,4vw,40px);
+    min-height:420px;
+    position:relative;
+  }
+  .screen{display:none; animation:fadeIn .35s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){
+    .screen{animation:none;}
+    .pulse{animation:none;}
+    .xp-fill{transition:none;}
+  }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--accent-cyan);
+    margin:0 0 8px;
+  }
+  h1.title{
+    font-family:var(--font-display);
+    font-size:clamp(26px,4vw,36px);
+    margin:0 0 6px;
+    line-height:1.1;
+  }
+  p.subtitle{color:var(--text-muted); margin:0 0 26px; max-width:560px; line-height:1.5;}
+
+  /* ---------- Mission cards (home) ---------- */
+  .mission-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:26px;}
+  @media (max-width:640px){.mission-grid{grid-template-columns:1fr;}}
+  .mission-card{
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel-2);
+    border-radius:14px;
+    padding:20px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .mission-card h3{font-family:var(--font-display); font-size:18px; margin:0;}
+  .mission-card p{color:var(--text-muted); font-size:13.5px; line-height:1.5; margin:0; flex-grow:1;}
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;}
+  .chip{
+    border:1px solid var(--border-soft);
+    background:transparent;
+    color:var(--text-primary);
+    font-size:12.5px;
+    padding:6px 12px;
+    border-radius:999px;
+  }
+  .chip.selected{background:var(--accent-cyan-soft); border-color:var(--accent-cyan); color:var(--accent-cyan);}
+  .primary-btn{
+    margin-top:6px;
+    background:var(--accent-amber);
+    color:#1a1305;
+    border:none;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:14px;
+    padding:11px 16px;
+    border-radius:10px;
+    transition:transform .15s ease;
+  }
+  .primary-btn:hover{transform:translateY(-1px);}
+  .secondary-btn{
+    background:var(--accent-cyan-soft);
+    color:var(--accent-cyan);
+    border:1px solid rgba(95,214,208,0.4);
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:14px;
+    padding:11px 16px;
+    border-radius:10px;
+  }
+  .ghost-btn{
+    background:transparent;
+    border:1px solid var(--border-soft);
+    color:var(--text-muted);
+    font-size:13px;
+    padding:8px 14px;
+    border-radius:8px;
+  }
+
+  .stats-panel{border:1px dashed var(--border-soft); border-radius:14px; padding:16px 18px;}
+  .stats-panel h4{margin:0 0 12px; font-family:var(--font-display); font-size:14px; color:var(--text-muted); font-weight:600;}
+  .stat-row{display:flex; align-items:center; gap:10px; font-size:13px; margin-bottom:9px;}
+  .stat-row .label{width:90px; color:var(--text-muted); font-family:var(--font-mono); font-size:11px; text-transform:uppercase;}
+  .bar-track{flex-grow:1; height:7px; border-radius:5px; background:rgba(143,160,188,0.14); overflow:hidden;}
+  .bar-fill{height:100%; background:var(--accent-cyan); border-radius:5px;}
+  .stat-row .pct{width:38px; text-align:right; font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted);}
+
+  /* ---------- Quiz screen ---------- */
+  .quiz-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;}
+  .q-counter{font-family:var(--font-mono); color:var(--text-muted); font-size:13px;}
+  .lives{display:flex; gap:5px;}
+  .life-dot{width:9px; height:9px; border-radius:50%; background:var(--accent-rose);}
+  .life-dot.spent{background:rgba(143,160,188,0.18);}
+  .timer-ring{position:relative; width:52px; height:52px;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .timer-ring .ring-bg{stroke:rgba(143,160,188,0.18); fill:none; stroke-width:5;}
+  .timer-ring .ring-fg{stroke:var(--accent-cyan); fill:none; stroke-width:5; stroke-linecap:round; transition:stroke-dashoffset 1s linear, stroke .2s;}
+  .timer-ring .ring-fg.low{stroke:var(--accent-rose);}
+  .timer-num{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:13px;}
+
+  .question-card{
+    background:var(--bg-panel-2);
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:18px;
+    font-size:16px;
+    line-height:1.55;
+  }
+  .subject-tag{display:inline-block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent-cyan); margin-bottom:10px;}
+  .options-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;}
+  @media (max-width:600px){.options-grid{grid-template-columns:1fr;}}
+  .opt{
+    text-align:left;
+    background:var(--bg-panel-2);
+    border:1px solid var(--border-soft);
+    border-radius:10px;
+    padding:13px 14px;
+    color:var(--text-primary);
+    font-size:14.5px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .opt .opt-letter{font-family:var(--font-mono); color:var(--text-muted); font-weight:700;}
+  .opt:hover:not(:disabled){border-color:var(--accent-cyan);}
+  .opt.correct{background:var(--accent-cyan-soft); border-color:var(--accent-cyan);}
+  .opt.wrong{background:var(--accent-rose-soft); border-color:var(--accent-rose);}
+  .opt:disabled{cursor:default;}
+  .explain-box{
+    border-left:3px solid var(--accent-amber);
+    background:rgba(242,169,59,0.08);
+    padding:12px 14px;
+    font-size:13.5px;
+    color:var(--text-muted);
+    border-radius:0 8px 8px 0;
+    margin-bottom:16px;
+  }
+  .quiz-actions{display:flex; justify-content:space-between; align-items:center;}
+
+  /* ---------- Puzzle screens ---------- */
+  .puzzle-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:600px){.puzzle-grid{grid-template-columns:1fr;}}
+  .puzzle-card{
+    background:var(--bg-panel-2); border:1px solid var(--border-soft); border-radius:12px;
+    padding:16px; text-align:left; color:var(--text-primary); display:flex; flex-direction:column; gap:8px;
+  }
+  .puzzle-card .pz-top{display:flex; justify-content:space-between; align-items:center; font-family:var(--font-mono); font-size:11px; color:var(--text-muted);}
+  .pz-diff{padding:2px 8px; border-radius:999px; border:1px solid var(--border-soft);}
+  .pz-diff.easy{color:var(--accent-cyan); border-color:rgba(95,214,208,0.4);}
+  .pz-diff.medium{color:var(--accent-amber); border-color:rgba(242,169,59,0.4);}
+  .pz-diff.hard{color:var(--accent-rose); border-color:rgba(229,86,107,0.4);}
+  .puzzle-card .pz-prompt{font-size:13.5px; color:var(--text-muted); line-height:1.4;}
+  .solved-check{color:var(--accent-cyan); font-family:var(--font-mono); font-size:11px;}
+
+  .puzzle-play-card{background:var(--bg-panel-2); border:1px solid var(--border-soft); border-radius:14px; padding:24px;}
+  .puzzle-play-card .pz-prompt-full{font-size:16px; line-height:1.6; margin-bottom:18px;}
+  .pz-input-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+  .pz-input-row input{
+    flex:1; min-width:160px;
+    background:var(--bg-deep); border:1px solid var(--border-soft); border-radius:8px;
+    padding:11px 12px; color:var(--text-primary); font-size:14.5px; font-family:var(--font-mono);
+  }
+  .pz-feedback{font-size:13.5px; margin-bottom:12px; min-height:18px;}
+  .pz-feedback.ok{color:var(--accent-cyan);}
+  .pz-feedback.bad{color:var(--accent-rose);}
+  .hint-box{font-size:13px; color:var(--text-muted); border-left:3px solid var(--accent-cyan); padding:10px 12px; background:rgba(95,214,208,0.06); border-radius:0 8px 8px 0; margin-bottom:14px;}
+
+  /* ---------- Results ---------- */
+  .result-big{font-family:var(--font-display); font-size:42px; margin:6px 0 2px;}
+  .result-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0 24px;}
+  @media (max-width:600px){.result-grid{grid-template-columns:1fr;}}
+  .result-stat{background:var(--bg-panel-2); border:1px solid var(--border-soft); border-radius:12px; padding:14px; text-align:center;}
+  .result-stat .num{font-family:var(--font-display); font-size:22px; color:var(--accent-amber);}
+  .result-stat .lab{font-family:var(--font-mono); font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;}
+
+  .shake{animation:shakeX .35s ease;}
+  @keyframes shakeX{0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="console-strip" id="consoleStrip">
+    <div class="hud-item">
+      <span class="hud-label">Rank</span>
+      <span class="rank-pill" id="hudRank">Cadet · Lv 1</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">XP <span id="hudXpText"></span></span>
+      <div class="xp-track"><div class="xp-fill" id="hudXpFill"></div></div>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">Streak</span>
+      <span class="streak-flame" id="hudStreak">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-2 4-2 7a4 4 0 108 0c2 2 2 5 2 6a8 8 0 11-16 0c0-4 3-6 4-9 1 2 2 3 4-4z"/></svg>
+        <span id="hudStreakNum">0</span>
+      </span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">Accuracy</span>
+      <span class="hud-value" id="hudAccuracy">—</span>
+    </div>
+    <button class="reset-btn" id="resetBtn">RESET PROGRESS</button>
+  </div>
+
+  <div class="bezel">
+
+    <!-- HOME -->
+    <div class="screen active" id="screen-home">
+      <p class="eyebrow">Mission Control</p>
+      <h1 class="title">JEE Prep Console</h1>
+      <p class="subtitle">A free JEE quiz game for Physics, Chemistry and Math — built for JEE Main aspirants who want quick, daily practice. Run timed quiz missions, or drop into the Puzzle Lab for untimed logic challenges. Every correct answer earns XP, builds your streak, and pushes your rank toward Topper.</p>
+
+      <div class="mission-grid">
+        <div class="mission-card">
+          <h3>Quiz Run</h3>
+          <p>10 timed MCQs · 3 lives · streak + speed XP bonuses. Pick a subject below.</p>
+          <div class="chip-row" id="subjectChips">
+            <button class="chip selected" data-subject="mixed">Mixed</button>
+            <button class="chip" data-subject="physics">Physics</button>
+            <button class="chip" data-subject="chemistry">Chemistry</button>
+            <button class="chip" data-subject="maths">Math</button>
+          </div>
+          <button class="primary-btn" id="launchQuizBtn">LAUNCH QUIZ ▸</button>
+        </div>
+        <div class="mission-card">
+          <h3>Puzzle Lab</h3>
+          <p>8 standalone logic & numeric puzzles. No timer. Hints cost a small XP fee.</p>
+          <button class="secondary-btn" id="openLabBtn" style="margin-top:auto;">OPEN LAB ▸</button>
+        </div>
+      </div>
+
+      <div class="stats-panel">
+        <h4>Subject accuracy</h4>
+        <div id="subjectStatsRows"></div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="screen" id="screen-quiz">
+      <div class="quiz-top">
+        <span class="q-counter" id="quizCounter">Q 01/10</span>
+        <div class="lives" id="quizLives"></div>
+        <div class="timer-ring">
+          <svg width="52" height="52" viewBox="0 0 52 52">
+            <circle class="ring-bg" cx="26" cy="26" r="22"></circle>
+            <circle class="ring-fg" id="ringFg" cx="26" cy="26" r="22"></circle>
+          </svg>
+          <span class="timer-num" id="timerNum">25</span>
+        </div>
+      </div>
+      <div class="question-card">
+        <span class="subject-tag" id="quizSubjectTag">PHYSICS</span>
+        <div id="quizQuestionText"></div>
+      </div>
+      <div class="options-grid" id="quizOptions"></div>
+      <div class="explain-box" id="quizExplain" style="display:none;"></div>
+      <div class="quiz-actions">
+        <button class="ghost-btn" id="quitQuizBtn">Quit run</button>
+        <button class="primary-btn" id="nextQBtn" style="display:none;">NEXT ▸</button>
+      </div>
+    </div>
+
+    <!-- PUZZLE LIST -->
+    <div class="screen" id="screen-puzzlelist">
+      <p class="eyebrow">Puzzle Lab</p>
+      <h1 class="title">Pick a puzzle</h1>
+      <p class="subtitle">Untimed. Solve once to bank the XP — re-solving for fun won't pay out twice.</p>
+      <div class="puzzle-grid" id="puzzleGrid"></div>
+      <div style="margin-top:20px;"><button class="ghost-btn" id="backHomeFromList">◂ Back to console</button></div>
+    </div>
+
+    <!-- PUZZLE PLAY -->
+    <div class="screen" id="screen-puzzleplay">
+      <p class="eyebrow" id="pzEyebrow">Puzzle 1 · Medium · 25 XP</p>
+      <div class="puzzle-play-card">
+        <div class="pz-prompt-full" id="pzPromptFull"></div>
+        <div class="pz-input-row">
+          <input type="text" id="pzInput" placeholder="Type your answer…" autocomplete="off">
+          <button class="primary-btn" id="pzSubmitBtn">CHECK</button>
+        </div>
+        <div class="pz-feedback" id="pzFeedback"></div>
+        <div class="hint-box" id="pzHintBox" style="display:none;"></div>
+        <div style="display:flex; gap:10px;">
+          <button class="ghost-btn" id="pzHintBtn">Show hint (−5 XP)</button>
+          <button class="ghost-btn" id="pzBackBtn">◂ Back to lab</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="screen" id="screen-results">
+      <p class="eyebrow">Mission Debrief</p>
+      <h1 class="title" id="resultsHeadline">Run complete</h1>
+      <div class="result-big" id="resultsScore">0 / 10</div>
+      <p class="subtitle" id="resultsSub" style="margin-bottom:0;">Accuracy and XP earned this run:</p>
+      <div class="result-grid">
+        <div class="result-stat"><div class="num" id="resAccuracy">0%</div><div class="lab">Accuracy</div></div>
+        <div class="result-stat"><div class="num" id="resXp">+0</div><div class="lab">XP earned</div></div>
+        <div class="result-stat"><div class="num" id="resStreak">0</div><div class="lab">Best streak</div></div>
+      </div>
+      <button class="primary-btn" id="backHomeFromResults">BACK TO CONSOLE ▸</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   DATA
+========================================================= */
+const QUESTIONS = {
+  physics: [
+    {q:"What is the SI unit of magnetic flux?", options:["Tesla","Weber","Henry","Maxwell"], correct:1, exp:"Magnetic flux is measured in weber (Wb). Tesla is the unit of magnetic field strength (B), and henry is the unit of inductance."},
+    {q:"What is the dimensional formula of Planck's constant (h)?", options:["[M L²T⁻¹]","[M L²T⁻²]","[M L T⁻¹]","[M L⁰T⁻¹]"], correct:0, exp:"Since h = Energy × time, its dimensions are [M L²T⁻²][T] = [M L²T⁻¹]."},
+    {q:"Ignoring air resistance, at what angle of projection (for a given speed) is the horizontal range maximum?", options:["30°","45°","60°","90°"], correct:1, exp:"Range R = u²sin(2θ)/g is maximum when sin(2θ)=1, i.e. θ = 45°."},
+    {q:"The escape velocity from Earth's surface is approximately", options:["7.9 km/s","11.2 km/s","9.8 km/s","16.4 km/s"], correct:1, exp:"v_e = √(2GM/R) evaluates to about 11.2 km/s for Earth."},
+    {q:"A wire's length is doubled and its cross-sectional area is halved. Its resistance becomes how many times the original?", options:["2 times","4 times","1/2 times","8 times"], correct:1, exp:"R = ρL/A. New R' = ρ(2L)/(A/2) = 4·(ρL/A) = 4R."},
+    {q:"At resonance in a series LCR circuit, the net impedance of the circuit equals", options:["Zero","Just the resistance R","The inductive reactance Xₗ","The capacitive reactance X_c"], correct:1, exp:"At resonance Xₗ = X_c, so they cancel and impedance Z = R."},
+    {q:"The first law of thermodynamics is fundamentally a statement of conservation of", options:["Momentum","Energy","Mass","Charge"], correct:1, exp:"ΔQ = ΔU + ΔW expresses that heat supplied either changes internal energy or does work — energy is conserved."},
+    {q:"In Young's double slit experiment, the fringe width is directly proportional to", options:["Slit separation (d)","Distance between slits and screen (D)","Square of wavelength (λ²)","Slit width"], correct:1, exp:"Fringe width β = λD/d, so β increases directly with screen distance D (and decreases with slit separation d)."},
+    {q:"In the photoelectric effect, the stopping potential depends on the", options:["Intensity of incident light","Frequency of incident light","Distance of the light source","Area of the metal surface"], correct:1, exp:"Stopping potential is set by photon energy (hf), so it depends on frequency, not intensity."},
+    {q:"In Bohr's model of the hydrogen atom, the radius of the nth orbit is proportional to", options:["n","n²","n³","1/n²"], correct:1, exp:"Bohr radius rₙ = n²(ℏ²/m k e²) — it scales as n²."}
+  ],
+  chemistry: [
+    {q:"The number of protons in the nucleus of an atom is called its", options:["Mass number","Atomic number","Atomic mass","Valency"], correct:1, exp:"Atomic number (Z) is defined as the number of protons."},
+    {q:"The pH of pure water at 25°C is", options:["0","7","14","1"], correct:1, exp:"Pure water is neutral, with [H⁺] = 10⁻⁷ M, giving pH 7."},
+    {q:"The hybridization of carbon in methane (CH₄) is", options:["sp","sp²","sp³","sp³d"], correct:2, exp:"Carbon forms 4 sigma bonds with no lone pairs in CH₄, requiring sp³ hybridization."},
+    {q:"Moving left to right across a period, atomic radius generally", options:["Increases","Decreases","Stays the same","Increases then decreases"], correct:1, exp:"Increasing nuclear charge pulls electrons in more tightly across a period, so atomic radius decreases."},
+    {q:"Avogadro's number is approximately", options:["6.022 × 10²²","6.022 × 10²³","3.011 × 10²³","6.022 × 10²⁴"], correct:1, exp:"One mole contains 6.022 × 10²³ entities — Avogadro's number."},
+    {q:"Among the hydrogen halides, which is the strongest acid in aqueous solution?", options:["HF","HCl","HBr","HI"], correct:3, exp:"H–X bond strength decreases down the group, making HI the easiest to ionize and the strongest acid of the four."},
+    {q:"By Le Chatelier's principle, increasing pressure on a gaseous equilibrium shifts it towards the side with", options:["More moles of gas","Fewer moles of gas","No effect on either side","Depends only on temperature"], correct:1, exp:"Higher pressure favours the side that occupies less volume, i.e. fewer gas moles."},
+    {q:"The oxidation state of manganese in KMnO₄ is", options:["+2","+4","+6","+7"], correct:3, exp:"K is +1 and O is −2 (×4 = −8); for the compound to be neutral, Mn must be +7."},
+    {q:"Which functional group has the highest IUPAC nomenclature priority among these?", options:["Alcohol","Aldehyde","Carboxylic acid","Ketone"], correct:2, exp:"In the standard seniority order, carboxylic acids outrank aldehydes, ketones and alcohols."},
+    {q:"A catalyst speeds up a reaction primarily by", options:["Raising the temperature","Lowering the activation energy","Increasing reactant concentration","Shifting the equilibrium position"], correct:1, exp:"A catalyst provides an alternative pathway with lower activation energy, without being consumed."}
+  ],
+  maths: [
+    {q:"The derivative of sin(x) with respect to x is", options:["cos(x)","−cos(x)","−sin(x)","tan(x)"], correct:0, exp:"d/dx[sin x] = cos x by the standard derivative rule."},
+    {q:"The value of i⁴ (where i = √−1) is", options:["−1","1","i","−i"], correct:1, exp:"i² = −1, so i⁴ = (i²)² = (−1)² = 1."},
+    {q:"The sum of the first 10 natural numbers is", options:["45","55","50","60"], correct:1, exp:"Sum = n(n+1)/2 = 10×11/2 = 55."},
+    {q:"In how many ways can 5 distinct books be arranged on a shelf?", options:["20","60","120","720"], correct:2, exp:"Arrangements of 5 distinct items = 5! = 120."},
+    {q:"The probability of getting a sum of 7 when two fair dice are rolled is", options:["1/6","1/12","1/9","5/36"], correct:0, exp:"6 of the 36 outcomes sum to 7 (1-6,2-5,3-4,4-3,5-2,6-1), giving 6/36 = 1/6."},
+    {q:"log₁₀(100) equals", options:["1","2","10","100"], correct:1, exp:"10² = 100, so log₁₀(100) = 2."},
+    {q:"The determinant of a 3×3 identity matrix is", options:["0","1","3","9"], correct:1, exp:"The determinant of any identity matrix is 1."},
+    {q:"The limit of (sin x)/x as x approaches 0 is", options:["0","1","∞","Undefined"], correct:1, exp:"This is a standard limit: lim(x→0) sin(x)/x = 1."},
+    {q:"The eccentricity of a circle is", options:["0","1","Greater than 1","Between 0 and 1"], correct:0, exp:"A circle is the special case of an ellipse with both foci coincident — eccentricity 0."},
+    {q:"The derivative of x⁵ with respect to x is", options:["5x⁴","x⁴","5x⁵","4x⁵"], correct:0, exp:"By the power rule, d/dx[xⁿ] = n·xⁿ⁻¹, so d/dx[x⁵] = 5x⁴."}
+  ]
+};
+
+const PUZZLES = [
+  {id:1, prompt:"Find the next number in the sequence: 2, 6, 12, 20, 30, ?", answers:["42"], hint:"Try multiplying consecutive integers: 1×2, 2×3, 3×4 …", xp:25, difficulty:"medium"},
+  {id:2, prompt:"I am a number. Double me, then add 10, and you get 50. What number am I?", answers:["20"], hint:"Set up the equation 2x + 10 = 50 and solve for x.", xp:15, difficulty:"easy"},
+  {id:3, prompt:"What has keys but no locks, space but no room, and you can enter but not go inside?", answers:["keyboard","a keyboard"], hint:"Think of something sitting on a desk in front of a screen.", xp:15, difficulty:"easy"},
+  {id:4, prompt:"A is the father of B, but B is not the son of A. How is B related to A?", answers:["daughter","b is a daughter","his daughter","she is his daughter"], hint:"If B isn't a son, B must be …", xp:20, difficulty:"medium"},
+  {id:5, prompt:"The product of two consecutive integers is 132. What is the smaller integer?", answers:["11"], hint:"Try integers near the square root of 132 (about 11.5).", xp:25, difficulty:"medium"},
+  {id:6, prompt:"If A=1, B=2, C=3 … Z=26, what is the sum of the letter values in 'JEE'?", answers:["20"], hint:"J is the 10th letter, E is the 5th letter.", xp:15, difficulty:"easy"},
+  {id:7, prompt:"A train travels 180 km in 3 hours, then 220 km in 2 hours. What is its average speed (km/h) for the whole journey?", answers:["80","80 km/h","80kmh","80km/h"], hint:"Average speed = total distance ÷ total time — not the average of the two individual speeds.", xp:35, difficulty:"hard"},
+  {id:8, prompt:"Which number comes next? 7, 11, 13, 17, 19, 23, ?", answers:["29"], hint:"Every number in this list is prime.", xp:30, difficulty:"hard"}
+];
+
+/* =========================================================
+   PROFILE / PERSISTENCE
+========================================================= */
+const PROFILE_KEY = "jee_console_profile_v1";
+const LEVEL_XP = 200;
+
+function defaultProfile(){
+  return {
+    xp: 0,
+    bestStreak: 0,
+    subjects: {
+      physics:{attempted:0, correct:0},
+      chemistry:{attempted:0, correct:0},
+      maths:{attempted:0, correct:0}
+    },
+    puzzlesSolved: []
+  };
+}
+
+let profile = defaultProfile();
+
+// Storage abstraction: uses Claude's artifact storage when running inside
+// claude.ai, and falls back to the browser's own localStorage when this
+// file is hosted as a normal website (GitHub Pages, Netlify, etc).
+const hasClaudeStorage = (typeof window !== "undefined") && !!window.storage && typeof window.storage.get === "function";
+
+async function storageGetRaw(key){
+  if(hasClaudeStorage){
+    try{ return await window.storage.get(key, false); }catch(e){ return null; }
+  }
+  try{
+    const v = localStorage.getItem(key);
+    return v ? {value:v} : null;
+  }catch(e){ return null; }
+}
+
+async function storageSetRaw(key, value){
+  if(hasClaudeStorage){
+    try{ return await window.storage.set(key, value, false); }catch(e){ return null; }
+  }
+  try{
+    localStorage.setItem(key, value);
+    return {value};
+  }catch(e){ return null; }
+}
+
+async function loadProfile(){
+  try{
+    const res = await storageGetRaw(PROFILE_KEY);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      profile = Object.assign(defaultProfile(), parsed);
+      profile.subjects = Object.assign(defaultProfile().subjects, parsed.subjects || {});
+    }
+  }catch(e){
+    // No saved profile yet — fine, defaults will be used.
+    profile = defaultProfile();
+  }
+  refreshHud();
+}
+
+async function saveProfile(){
+  try{
+    await storageSetRaw(PROFILE_KEY, JSON.stringify(profile));
+  }catch(e){
+    console.error("Could not save progress:", e);
+  }
+}
+
+function rankForLevel(level){
+  if(level < 3) return "Cadet";
+  if(level < 6) return "Scholar";
+  if(level < 10) return "Strategist";
+  return "Topper";
+}
+
+function refreshHud(){
+  const level = Math.floor(profile.xp / LEVEL_XP) + 1;
+  const intoLevel = profile.xp % LEVEL_XP;
+  document.getElementById("hudRank").textContent = `${rankForLevel(level)} · Lv ${level}`;
+  document.getElementById("hudXpText").textContent = `${intoLevel}/${LEVEL_XP}`;
+  document.getElementById("hudXpFill").style.width = `${(intoLevel/LEVEL_XP)*100}%`;
+  document.getElementById("hudStreakNum").textContent = profile.bestStreak;
+
+  let attempted=0, correct=0;
+  Object.values(profile.subjects).forEach(s=>{attempted+=s.attempted; correct+=s.correct;});
+  document.getElementById("hudAccuracy").textContent = attempted ? Math.round(correct/attempted*100)+"%" : "—";
+
+  renderSubjectStats();
+}
+
+function pulseStreak(){
+  const el = document.getElementById("hudStreak");
+  el.classList.remove("pulse");
+  void el.offsetWidth; // restart animation
+  el.classList.add("pulse");
+}
+
+function renderSubjectStats(){
+  const labels = {physics:"Physics", chemistry:"Chemistry", maths:"Math"};
+  const wrap = document.getElementById("subjectStatsRows");
+  wrap.innerHTML = "";
+  Object.keys(labels).forEach(key=>{
+    const s = profile.subjects[key];
+    const pct = s.attempted ? Math.round((s.correct/s.attempted)*100) : 0;
+    const row = document.createElement("div");
+    row.className = "stat-row";
+    row.innerHTML = `<span class="label">${labels[key]}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span class="pct">${pct}%</span>`;
+    wrap.appendChild(row);
+  });
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+document.getElementById("backHomeFromList").addEventListener("click", ()=>showScreen("screen-home"));
+document.getElementById("backHomeFromResults").addEventListener("click", ()=>showScreen("screen-home"));
+document.getElementById("openLabBtn").addEventListener("click", ()=>{ renderPuzzleList(); showScreen("screen-puzzlelist"); });
+
+/* =========================================================
+   RESET
+========================================================= */
+document.getElementById("resetBtn").addEventListener("click", async ()=>{
+  if(confirm("Reset all progress? XP, level and solved puzzles will be cleared. This can't be undone.")){
+    profile = defaultProfile();
+    await saveProfile();
+    refreshHud();
+    showScreen("screen-home");
+  }
+});
+
+/* =========================================================
+   QUIZ LOGIC
+========================================================= */
+let selectedSubject = "mixed";
+document.querySelectorAll("#subjectChips .chip").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    document.querySelectorAll("#subjectChips .chip").forEach(c=>c.classList.remove("selected"));
+    chip.classList.add("selected");
+    selectedSubject = chip.dataset.subject;
+  });
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+const TIME_PER_Q = 25;
+const RING_CIRC = 2*Math.PI*22;
+document.getElementById("ringFg").style.strokeDasharray = RING_CIRC;
+
+let quiz = null;
+
+document.getElementById("launchQuizBtn").addEventListener("click", ()=>{
+  let pool = [];
+  if(selectedSubject === "mixed"){
+    pool = [...QUESTIONS.physics, ...QUESTIONS.chemistry, ...QUESTIONS.maths].map((q,i)=>({...q, subject: i<10?"physics":(i<20?"chemistry":"maths")}));
+  }else{
+    pool = QUESTIONS[selectedSubject].map(q=>({...q, subject:selectedSubject}));
+  }
+  pool = shuffle(pool).slice(0,10);
+  quiz = {
+    questions: pool,
+    index: 0,
+    lives: 3,
+    streak: 0,
+    bestStreakThisRun: 0,
+    correctCount: 0,
+    xpEarned: 0,
+    timer: null,
+    remaining: TIME_PER_Q,
+    locked: false
+  };
+  showScreen("screen-quiz");
+  renderQuizQuestion();
+});
+
+document.getElementById("quitQuizBtn").addEventListener("click", ()=>{
+  if(quiz && quiz.timer) clearInterval(quiz.timer);
+  finishQuiz();
+});
+
+function renderLives(){
+  const wrap = document.getElementById("quizLives");
+  wrap.innerHTML = "";
+  for(let i=0;i<3;i++){
+    const dot = document.createElement("span");
+    dot.className = "life-dot" + (i >= quiz.lives ? " spent" : "");
+    wrap.appendChild(dot);
+  }
+}
+
+function renderQuizQuestion(){
+  const q = quiz.questions[quiz.index];
+  document.getElementById("quizCounter").textContent = `Q ${String(quiz.index+1).padStart(2,"0")}/${quiz.questions.length}`;
+  document.getElementById("quizSubjectTag").textContent = q.subject.toUpperCase();
+  document.getElementById("quizQuestionText").textContent = q.q;
+  renderLives();
+
+  const optWrap = document.getElementById("quizOptions");
+  optWrap.innerHTML = "";
+  const letters = ["A","B","C","D"];
+  q.options.forEach((opt,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.addEventListener("click", ()=>selectOption(i));
+    optWrap.appendChild(btn);
+  });
+
+  document.getElementById("quizExplain").style.display = "none";
+  document.getElementById("nextQBtn").style.display = "none";
+  quiz.locked = false;
+  quiz.remaining = TIME_PER_Q;
+  updateRing();
+  if(quiz.timer) clearInterval(quiz.timer);
+  quiz.timer = setInterval(()=>{
+    quiz.remaining--;
+    updateRing();
+    if(quiz.remaining <= 0){
+      clearInterval(quiz.timer);
+      selectOption(-1); // timeout = no answer
+    }
+  }, 1000);
+}
+
+function updateRing(){
+  const ring = document.getElementById("ringFg");
+  const frac = quiz.remaining / TIME_PER_Q;
+  ring.style.strokeDashoffset = RING_CIRC * (1-frac);
+  ring.classList.toggle("low", quiz.remaining <= 7);
+  document.getElementById("timerNum").textContent = Math.max(quiz.remaining,0);
+}
+
+function selectOption(choiceIdx){
+  if(quiz.locked) return;
+  quiz.locked = true;
+  clearInterval(quiz.timer);
+
+  const q = quiz.questions[quiz.index];
+  const options = document.querySelectorAll("#quizOptions .opt");
+  options.forEach(o=>o.disabled = true);
+
+  const isCorrect = choiceIdx === q.correct;
+  profile.subjects[q.subject].attempted++;
+
+  if(isCorrect){
+    options[choiceIdx].classList.add("correct");
+    quiz.streak++;
+    quiz.bestStreakThisRun = Math.max(quiz.bestStreakThisRun, quiz.streak);
+    quiz.correctCount++;
+    profile.subjects[q.subject].correct++;
+    const timeBonus = Math.floor(quiz.remaining/5);
+    const streakBonus = Math.min(quiz.streak, 5);
+    const gained = 10 + timeBonus + streakBonus;
+    quiz.xpEarned += gained;
+    profile.xp += gained;
+    profile.bestStreak = Math.max(profile.bestStreak, quiz.streak);
+    pulseStreak();
+  }else{
+    if(choiceIdx >= 0) options[choiceIdx].classList.add("wrong");
+    options[q.correct].classList.add("correct");
+    quiz.streak = 0;
+    quiz.lives--;
+  }
+  refreshHud();
+
+  document.getElementById("quizExplain").style.display = "block";
+  document.getElementById("quizExplain").textContent = q.exp;
+  document.getElementById("nextQBtn").style.display = "inline-block";
+}
+
+document.getElementById("nextQBtn").addEventListener("click", ()=>{
+  if(quiz.lives <= 0 || quiz.index >= quiz.questions.length - 1){
+    finishQuiz();
+  }else{
+    quiz.index++;
+    renderQuizQuestion();
+  }
+});
+
+async function finishQuiz(){
+  if(quiz && quiz.timer) clearInterval(quiz.timer);
+  await saveProfile();
+  refreshHud();
+  if(!quiz){ showScreen("screen-home"); return; }
+  const total = quiz.index + (quiz.lives<=0 || quiz.locked ? 1 : 0);
+  const accuracy = total ? Math.round((quiz.correctCount/total)*100) : 0;
+  document.getElementById("resultsHeadline").textContent = quiz.lives<=0 ? "Run ended — out of lives" : "Quiz run complete";
+  document.getElementById("resultsScore").textContent = `${quiz.correctCount} / ${total}`;
+  document.getElementById("resAccuracy").textContent = `${accuracy}%`;
+  document.getElementById("resXp").textContent = `+${quiz.xpEarned}`;
+  document.getElementById("resStreak").textContent = quiz.bestStreakThisRun;
+  quiz = null;
+  showScreen("screen-results");
+}
+
+/* =========================================================
+   PUZZLE LAB
+========================================================= */
+let currentPuzzle = null;
+let hintUsedThisPuzzle = false;
+
+function renderPuzzleList(){
+  const grid = document.getElementById("puzzleGrid");
+  grid.innerHTML = "";
+  PUZZLES.forEach(p=>{
+    const solved = profile.puzzlesSolved.includes(p.id);
+    const card = document.createElement("button");
+    card.className = "puzzle-card";
+    card.innerHTML = `
+      <div class="pz-top">
+        <span>PUZZLE ${String(p.id).padStart(2,"0")}</span>
+        <span class="pz-diff ${p.difficulty}">${p.difficulty.toUpperCase()} · ${p.xp} XP</span>
+      </div>
+      <div class="pz-prompt">${p.prompt}</div>
+      ${solved ? '<span class="solved-check">✓ Solved</span>' : ""}
+    `;
+    card.addEventListener("click", ()=>openPuzzle(p.id));
+    grid.appendChild(card);
+  });
+}
+
+function openPuzzle(id){
+  currentPuzzle = PUZZLES.find(p=>p.id===id);
+  hintUsedThisPuzzle = false;
+  document.getElementById("pzEyebrow").textContent = `Puzzle ${currentPuzzle.id} · ${currentPuzzle.difficulty[0].toUpperCase()+currentPuzzle.difficulty.slice(1)} · ${currentPuzzle.xp} XP`;
+  document.getElementById("pzPromptFull").textContent = currentPuzzle.prompt;
+  document.getElementById("pzInput").value = "";
+  document.getElementById("pzFeedback").textContent = "";
+  document.getElementById("pzFeedback").className = "pz-feedback";
+  document.getElementById("pzHintBox").style.display = "none";
+  document.getElementById("pzHintBtn").style.display = "inline-block";
+  document.getElementById("pzHintBtn").textContent = "Show hint (−5 XP)";
+  showScreen("screen-puzzleplay");
+  document.getElementById("pzInput").focus();
+}
+
+function normalizeAnswer(str){
+  return str.toLowerCase().trim().replace(/[^a-z0-9\s]/g,"").replace(/\s+/g," ");
+}
+
+document.getElementById("pzHintBtn").addEventListener("click", ()=>{
+  hintUsedThisPuzzle = true;
+  document.getElementById("pzHintBox").style.display = "block";
+  document.getElementById("pzHintBox").textContent = "Hint: " + currentPuzzle.hint;
+  document.getElementById("pzHintBtn").textContent = "Hint used";
+  document.getElementById("pzHintBtn").disabled = true;
+});
+
+document.getElementById("pzSubmitBtn").addEventListener("click", checkPuzzleAnswer);
+document.getElementById("pzInput").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") checkPuzzleAnswer();
+});
+
+async function checkPuzzleAnswer(){
+  const raw = document.getElementById("pzInput").value;
+  const given = normalizeAnswer(raw);
+  const accepted = currentPuzzle.answers.map(normalizeAnswer);
+  const feedback = document.getElementById("pzFeedback");
+  const card = document.querySelector(".puzzle-play-card");
+
+  if(!raw.trim()){ return; }
+
+  if(accepted.includes(given)){
+    feedback.className = "pz-feedback ok";
+    const already = profile.puzzlesSolved.includes(currentPuzzle.id);
+    if(!already){
+      const award = Math.max(currentPuzzle.xp - (hintUsedThisPuzzle ? 5 : 0), 5);
+      profile.xp += award;
+      profile.puzzlesSolved.push(currentPuzzle.id);
+      feedback.textContent = `Correct! +${award} XP banked.`;
+      await saveProfile();
+      refreshHud();
+    }else{
+      feedback.textContent = "Correct! (Already solved earlier — no extra XP, just for fun.)";
+    }
+    document.getElementById("pzHintBtn").style.display = "none";
+  }else{
+    feedback.className = "pz-feedback bad";
+    feedback.textContent = "Not quite — try again.";
+    card.classList.remove("shake");
+    void card.offsetWidth;
+    card.classList.add("shake");
+  }
+}
+
+document.getElementById("pzBackBtn").addEventListener("click", ()=>{
+  renderPuzzleList();
+  showScreen("screen-puzzlelist");
+});
+
+/* =========================================================
+   INIT
+========================================================= */
+(async function init(){
+  await loadProfile();
+})();
+</script>
+</body>
+</html>
